@@ -168,10 +168,26 @@ void Polynomial::multiply(const Polynomial& poly)
         this->m_coefficients.clear();
         this->setMember(0, multiple);
     }
+    // If either polynomials is a constant one (but not both), we can still ease the multiplication
+    else if (this->isConstant() || poly.isConstant())
+    {
+        // Select which polynomial is the constant and the more complex one;
+        const Polynomial* constantOne = (this->isConstant() ? this : &poly);
+        const Polynomial* complexOne = (!this->isConstant() ? this : &poly);
+
+        // Only multiply the coefficients of the complex polynomial by the given constant, storing it in this
+        double constant = constantOne->leadingCoefficient();
+        for (size_t i = 0; i <= complexOne->degree(); ++i)
+        {
+            double coeff = complexOne->getMember(i);
+            if (coeff == 0) continue;
+
+            this->setMember(i, coeff * constant);
+        }
+    }
+    // If both polynomials are complex ones, we do the multiplication by hand
     else
     {
-        // If the polynomials are in a different state, we do the multiplication by hand
-
         vector<double> multi_coefficients;
         multi_coefficients.resize(this->degree() + poly.degree() + 1); // Create space for the coefficients
 
