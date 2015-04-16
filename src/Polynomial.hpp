@@ -14,6 +14,9 @@ class Polynomial
         // Default constructor
         Polynomial();
 
+        // Constructors for constant polynomials
+        Polynomial(double coefficient);
+
         // Default constructor with initial coefficient length provided
         //Polynomial(const size_t coefficients);
 
@@ -32,9 +35,11 @@ class Polynomial
         /*double operator [] (const size_t index) const;
         double& operator [] (const size_t index);*/
 
-        // Add and subtract operator
-        Polynomial operator + (const Polynomial& poly);
-        Polynomial operator - (const Polynomial& poly);
+        // Arithmetic operators
+        friend Polynomial operator + (const Polynomial& a, const Polynomial& b);
+        friend Polynomial operator - (const Polynomial& a, const Polynomial& b);
+        friend Polynomial operator * (const Polynomial& a, const Polynomial& b);
+
 
         // Équalité, inéqualité
         bool operator == (const Polynomial& poly) const;
@@ -47,6 +52,12 @@ class Polynomial
         // Get the degree
         size_t degree() const;
 
+        // Get the leading coefficient (shortcut to the degree-th member's)
+        double leadingCoefficient() const
+        {
+            return this->getMember(this->degree());
+        }
+
         // Get the nth coefficient
         double getMember(const size_t index) const;
 
@@ -54,11 +65,12 @@ class Polynomial
         void setMember(const size_t index, const double coefficient);
 
         // Calculate the polynomial function's value for variable 't'
-        double run(const double t) const;
+        double at(const double t) const;
 
-        // Add and subtract a polynomial from the current
+        // Arithmetical methods
         void add(const Polynomial& poly);
         void subtract(const Polynomial& poly);
+        void multiply(const Polynomial& poly);
 
         // Equalité
         bool equals(const Polynomial& poly) const;
@@ -82,10 +94,6 @@ class Polynomial
         void _performCleanup();
 };
 
-/* Operators between two instances */
-Polynomial operator + (const Polynomial& a, const Polynomial& b);
-Polynomial operator - (const Polynomial& a, const Polynomial& b);
-Polynomial operator * (const Polynomial& a, const Polynomial& b);
 Polynomial operator / (const Polynomial& a, const Polynomial& b);
 
 #endif // _POLYNOMIAL_H
