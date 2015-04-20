@@ -1,6 +1,7 @@
 #include "Polynomial.hpp"
 #include <cmath>
 #include <vector>
+#include <algorithm>
 
 using namespace std;
 
@@ -27,6 +28,7 @@ Polynomial::Polynomial(const Polynomial& poly)
 {
     // Copy the map.
     this->m_coefficients = poly.m_coefficients;
+    this->_performCleanup();
 }
 
 #include <sstream>
@@ -42,6 +44,7 @@ Polynomial::~Polynomial()
 const Polynomial& Polynomial::operator=(const Polynomial& poly)
 {
     this->m_coefficients = poly.m_coefficients;
+    this->_performCleanup();
     return *this;
 }
 
@@ -174,6 +177,7 @@ void Polynomial::multiply(const Polynomial& poly)
         // Select which polynomial is the constant and the more complex one;
         const Polynomial* constantOne = (this->isConstant() ? this : &poly);
         const Polynomial* complexOne = (!this->isConstant() ? this : &poly);
+        Polynomial multiple;
 
         // Only multiply the coefficients of the complex polynomial by the given constant, storing it in this
         double constant = constantOne->leadingCoefficient();
@@ -182,8 +186,11 @@ void Polynomial::multiply(const Polynomial& poly)
             double coeff = complexOne->getMember(i);
             if (coeff == 0) continue;
 
-            this->setMember(i, coeff * constant);
+            multiple.setMember(i, coeff * constant);
         }
+
+        // Let the multiplied polynomial be the current one
+        *this = multiple;
     }
     // If both polynomials are complex ones, we do the multiplication by hand
     else
@@ -207,13 +214,79 @@ void Polynomial::multiply(const Polynomial& poly)
         }
 
         // Set the calculated coefficients
+        this->m_coefficients.clear();
         for (size_t i = 0; i < multi_coefficients.size(); ++i)
             this->setMember(i, multi_coefficients.at(i));
     }
 }
 
-/*bool Polynomial::equals(const Polynomial& poly) const
+bool Polynomial::divide(const Polynomial& divisor, Polynomial& quotient, Polynomial& remainder) const
 {
+    if (divisor.isNull())
+        return false;
+
+    if (divisor.degree() > this->degree())
+    {
+        remainder = *this;
+        Polynomial quotient_null;
+        quotient = quotient_null;
+    }
+    else
+    // Degree of divisor is smaller or equal than divident
+    {
+        Polynomial dividend = *this; // Save out the current instance
+        // f : g = q
+        // f % g = r
+        // f: dividend (this), g: divisor, q: quotient, r: remainder
+        // The dividend is only initially 'this', it gets consumed as the division happens.
+
+        size_t quotient_max_degree = dividend.degree() - divisor.degree();
+        size_t quotient_member_degree = quotient_max_degree;
+        // We can only divide further if there is something to divide.
+        while (quotient_member_degree >= 0 && quotient_member_degree <= quotient_max_degree && !dividend.isNull())
+        {
+            /*cout << "-----------------------------" << endl;
+            cout << "I'm running a division loop. Current degree of the quotient: " << quotient_member_degree << endl;
+            cout << "(Maximum plausible degree of quotient: " << quotient_max_degree << ")" << endl;
+            cout << "Dividend: " << dividend << endl;*/
+            // Subtract the divisor's LC from the dividend's LC
+            // (and so the powers), so that we get the LC of the quotient.
+            /*cout << "deg(divident) = " << dividend.degree() << endl;
+            cout << "lc(dividend) = " << dividend.leadingCoefficient() << endl;*/
+
+            // After subtracting the LCs, we get the quotient's LC.
+            // Using polynomial long division, we now multiply the quotient's LC by the divisor (-> getting a polynomial)
+            // and thus, we subtract that from the dividend... and loop this whole shit.)
+
+            // If the current member degree underflows, thus reaches a values higher than the maximum degree
+            // We terminate the whole cycle because we reached the remainder.
+            if (quotient_member_degree > quotient_max_degree)
+                break;
+
+            // Set the current member of the quotient to the quotient of the coefficients
+            quotient.setMember(quotient_member_degree, dividend.leadingCoefficient() / divisor.leadingCoefficient());
+
+            Polynomial multiplier;
+            multiplier.setMember(quotient_member_degree, quotient.getMember(quotient_member_degree));
+
+            /*cout << "Divisor: " << divisor << endl;*/
+            Polynomial inner_multiple = divisor * multiplier;
+
+            dividend = dividend - inner_multiple;
+
+            /*cout << "Current quotient (across division operation): " << quotient << endl;
+            cout << "Current multiplier: " << multiplier << endl;
+            cout << "Multiplied dividend: (this will be subtracted) " << inner_multiple << endl;
+            cout << "New dividend (after subtraction): " << dividend << endl;*/
+
+            quotient_member_degree = dividend.degree() - divisor.degree();
+        }
+
+        // When the loop reaches its terminus, we divided everything we could.
+        // Anything that remained in the dividend (after subtraction) is actually the remainder.
+        remainder = dividend; // So assign it into its proper place.
+    }
+}
 
 bool Polynomial::equals(const Polynomial& poly) const
 {
@@ -305,8 +378,22 @@ Polynomial operator*(const Polynomial& a, const Polynomial& b)
     return ret;
 }
 
-/*Polynomial operator/(const Polynomial& a, const Polynomial& b)
+Polynomial operator/(const Polynomial& a, const Polynomial& b)
 {
+    Polynomial q; // quotient
+    Polynomial r; // remainder
 
+    a.divide(b, q, r);
+
+    return q;
 }
-*/
+
+Polynomial operator%(const Polynomial& a, const Polynomial& b)
+{
+    Polynomial q; // quotient
+    Polynomial r; // remainder
+
+    a.divide(b, q, r);
+
+    return r;
+}

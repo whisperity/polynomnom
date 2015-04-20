@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <iostream>
+#include <functional>
 #include <map>
 
 typedef std::map<size_t, double, std::greater<size_t>> coefficientMap;
@@ -40,6 +41,8 @@ class Polynomial
         friend Polynomial operator - (const Polynomial& a, const Polynomial& b);
         friend Polynomial operator * (const Polynomial& a, const Polynomial& b);
 
+        friend Polynomial operator / (const Polynomial& a, const Polynomial& b);
+        friend Polynomial operator % (const Polynomial& a, const Polynomial& b);
 
         // Équalité, inéqualité
         bool operator == (const Polynomial& poly) const;
@@ -71,6 +74,7 @@ class Polynomial
         void add(const Polynomial& poly);
         void subtract(const Polynomial& poly);
         void multiply(const Polynomial& poly);
+        bool divide(const Polynomial& divisor, Polynomial& quotient, Polynomial& remainder) const;
 
         // Equalité
         bool equals(const Polynomial& poly) const;
@@ -93,7 +97,5 @@ class Polynomial
         // Internal cleanup function.
         void _performCleanup();
 };
-
-Polynomial operator / (const Polynomial& a, const Polynomial& b);
 
 #endif // _POLYNOMIAL_H
