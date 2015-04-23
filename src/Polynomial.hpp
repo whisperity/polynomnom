@@ -480,7 +480,7 @@ void Polynomial<T>::_performCleanup()
 {
     // Cleanup consists of removing the 0 coefficient parts from the map
     size_t num_coefficients = 0;
-    size_t removePowers[this->m_coefficients.size()];
+    size_t* removePowers = new size_t[this->m_coefficients.size()];
 
     // And keeping the degree of the object the degree of the polynomial
     size_t maxPower = 0;
@@ -500,6 +500,7 @@ void Polynomial<T>::_performCleanup()
     for (size_t i = 0; i < num_coefficients; ++i)
         this->m_coefficients.erase(removePowers[i]);
 
+    delete[] removePowers;
     this->m_degree = maxPower;
     return;
 }
