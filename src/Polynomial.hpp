@@ -267,13 +267,22 @@ void Polynomial<T>::setMember(const size_t index, const T coefficient)
 template<typename T>
 T Polynomial<T>::at(const T t) const
 {
-    double result = 0;
+    // Using Horner's rule:
+    // Consider the polynomial x^5 - 3x^4 + 0x^2 - x + 6 at -1.
+    //
+    //     1  -3   0   1   6
+    //   |------------------
+    // -1| 1  -4   4  -3   9
+    //       (^)
+    // The first element of the table (the LC) is copied down.
+    // After that, every element is calculated as follows: the previous element * the number to the left (the -1)
+    // + the element above. (So at (^) we have 1 * (-1) + (-3) = -1 - 3 = -4, etc.
 
-    for (size_t power = 0; power <= this->degree(); ++power)
-    {
-        //cout << result << " += " << this->getMember(power) << " * " << t << "^" << power << endl;
-        result += this->getMember(power) * (pow(t, power));
-    }
+    T result = this->leadingCoefficient();
+
+    //                                                 V have to make sure we don't underflow.
+    for (size_t power = this->degree() - 1; power >= 0 && power <= this->degree(); --power)
+        result = result * t + this->getMember(power);
 
     return result;
 }
