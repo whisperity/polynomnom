@@ -483,8 +483,8 @@ template<typename T>
 void Polynomial<T>::_performCleanup()
 {
     // Cleanup consists of removing the 0 coefficient parts from the map
-    size_t num_coefficients = 0;
-    size_t* removePowers = new size_t[this->m_coefficients.size()];
+    std::vector<size_t> removePowers;
+    removePowers.reserve(this->m_coefficients.size());
 
     // And keeping the degree of the object the degree of the polynomial
     size_t maxPower = 0;
@@ -494,19 +494,17 @@ void Polynomial<T>::_performCleanup()
         cit != this->m_coefficients.cend(); ++cit)
     {
         if (cit->second == id_additive<T>::value)
-            removePowers[num_coefficients++] = cit->first;
+            removePowers.push_back(cit->first);
         else
             if (cit->first > maxPower)
                 maxPower = cit->first;
     }
 
     // Remove the elements
-    for (size_t i = 0; i < num_coefficients; ++i)
-        this->m_coefficients.erase(removePowers[i]);
+    for (std::vector<size_t>::const_iterator cit = removePowers.cbegin(); cit != removePowers.cend(); ++cit)
+        this->m_coefficients.erase(*cit);
 
-    delete[] removePowers;
     this->m_degree = maxPower;
-    return;
 }
 
 template<typename T>
