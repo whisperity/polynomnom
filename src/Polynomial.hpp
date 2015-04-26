@@ -8,6 +8,8 @@
 #include <cmath>
 #include <vector>
 #include <algorithm>
+#include "Identity.hpp"
+#include "absvalue_wrapper.hpp"
 
 template<typename T>
 class Polynomial
@@ -102,21 +104,6 @@ class Polynomial
         // (that is: a number... only one coefficient on the zeroth power, and it is not zero)
         bool isConstant() const;
 
-        /*void fullPrint() const
-        {
-            std::cout << "[FULLPRINT]" << std::endl;
-            for (coefficientMap::const_iterator cit = this->m_coefficients.cbegin();
-                cit != this->m_coefficients.cend(); ++cit)
-            {
-                std::cout << "Member power: " << cit->first << ", coefficient: " << cit->second;
-
-                if (cit->second == 0)
-                    std::cout << "  !COEFFICIENT ZERO!";
-
-                std::cout << std::endl;
-            }
-            std::cout << "[/FULLPRINT]" << std::endl;
-        }*/
     private:
         // Array for coefficients
         // (First part of the pair is the power of the indeterminate,
@@ -215,11 +202,11 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
     for (typename Polynomial<T>::coefficientsMap::const_iterator cit = poly.m_coefficients.cbegin();
         cit != poly.m_coefficients.cend(); ++cit)
     {
-        // it->first: power
-        // it->second: coefficient
+        // cit->first: power
+        // cit->second: coefficient
 
         // Omit the members with 0 coefficient
-        if (cit->second == 0) continue;
+        if (cit->second == id_additive<T>::value) continue;
 
         if (!firstCoeff)
             o << " ";
@@ -231,9 +218,17 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
         else if (cit->second > 0 && !firstCoeff)
             o << "+ ";
 
-        // Only print the coefficient if it is not 1. The 1 multiplier can be omitted.
-        if (fabs(cit->second) != 1)
-            o << fabs(cit->second);
+        // Only print the coefficient if it is not 1. The 1 multiplier as it's multiplicative inverse can be omitted.
+		// Because of templating, we use a custom implementation here.
+        if (id_multiplicative_exists<T>::value)
+        {
+            if (abs_value<T>::known && abs_value<T>::abs(cit->second) != id_multiplicative<T>::value)
+                o << abs_value<T>::abs(cit->second);
+            else if (!abs_value<T>::known && cit->second != id_multiplicative<T>::value)
+                o << cit->second;
+        }
+        else
+            o << cit->second;
 
         // Don't print the power for the first-order member and don't print x for the constant member
         if (cit->first > 1)
@@ -259,7 +254,7 @@ T Polynomial<T>::getMember(const size_t index) const
     if (this->hasMember(index))
         return this->m_coefficients.at(index);
     else
-        return .0; // Non-existant members are just not stored: they are mathematically there with 0 coefficient.
+        return id_additive<T>::value; // Non-existant members are just not stored: they are mathematically there with 0 coefficient.
 }
 
 template<typename T>
@@ -465,14 +460,14 @@ bool Polynomial<T>::isNull() const
 {
     // A polynomial is a null-polynomial if every coefficient is zero.
     // Utilising the invariant, if we are nullpolynomial, the degree is zero and that 0th coefficient is zero.
-    return (this->degree() == 0 && this->getMember(0) == 0);
+    return (this->degree() == 0 && this->getMember(0) == id_additive<T>::value);
 }
 
 template<typename T>
 bool Polynomial<T>::isConstant() const
 {
     // The polynomial is a constant one if there is only a constant (0th power) member
-    return (this->degree() == 0 && this->getMember(0) != 0);
+    return (this->degree() == 0 && this->getMember(0) != id_additive<T>::value);
 }
 
 template<typename T>
@@ -489,7 +484,7 @@ void Polynomial<T>::_performCleanup()
     for (typename Polynomial<T>::coefficientsMap::const_iterator cit = this->m_coefficients.cbegin();
         cit != this->m_coefficients.cend(); ++cit)
     {
-        if (cit->second == 0)
+        if (cit->second == id_additive<T>::value)
             removePowers[num_coefficients++] = cit->first;
         else
             if (cit->first > maxPower)
