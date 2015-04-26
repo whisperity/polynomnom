@@ -1,6 +1,10 @@
+/*
+* This must be built against the C++11 standard!
+*/
 #include <string>
 #include <iostream>
 #include "Polynomial.hpp"
+#include "EuclideanAlgorithm.hpp"
 
 using namespace std;
 
@@ -269,6 +273,33 @@ int main()
 
     cout << c1/c2 << endl;
     cout << c2/c1 << endl;
+    
+    // Test the euclidean algorithms
+    cout << endl << endl;
+    cout << "GCD(172, 62) = " << euclidean<int>(172, 62) << endl;
+    cout << "LCM(172, 62) = " << euclidean_lcm<int>(172, 62) << endl;
+
+    EEuclideanResult<int> res = extended_euclidean<int>(172, 62);
+    cout << "GCD = A * X + B * Y" << endl;
+    cout << "ExtendedEuclidean(172, 62) :== " << res.a << " * " << res.x << " + " << res.b << " * " << res.y << " = "
+        << res.gcd << endl;
+    cout << "Truly? " << (res.a*res.x + res.b*res.y == res.gcd ? "Yeah." : "Noope.") << endl;
+
+    Polynomial<double> egy, ketto;
+    egy.setMember(4, 1); egy.setMember(3, 1); egy.setMember(2, -3); egy.setMember(1, -4); egy.setMember(0, -1);
+    ketto.setMember(3, 1); ketto.setMember(2, 1); ketto.setMember(1, -1); ketto.setMember(0, -1);
+    cout << "gcd(" << egy << "  ;  " << ketto << ") = ";
+    Polynomial<double> egyKettoGCD = euclidean<Polynomial<double>>(egy, ketto);
+    cout << egyKettoGCD << endl;
+
+    EEuclideanResult<Polynomial<double>> result = extended_euclidean<Polynomial<double>>(egy, ketto);
+    cout << "ExtendedEuclidean(egy, 62) :== [" << result.a << " * " << result.x << "] + [" << result.b << " * " << result.y << "] = "
+        << result.gcd << endl;
+    cout << "Truly? " << (result.a*result.x + result.b*result.y == result.gcd ? "Yeah." : "Noope.") << endl;
+
+    cout << endl << "Type something to exit." << endl;
+    std::string temp;
+    std::cin >> temp;
 
     return 0;
 }

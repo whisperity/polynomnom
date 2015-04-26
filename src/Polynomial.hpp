@@ -2,14 +2,14 @@
 #define _POLYNOMIAL_H
 
 #include <cstddef>
-#include <iostream>
+#include <iosfwd>
 #include <functional>
 #include <map>
 #include <cmath>
 #include <vector>
 #include <algorithm>
-#include "Identity.hpp"
 #include "absvalue_wrapper.hpp"
+#include "add_mult_identity.hpp"
 
 template<typename T>
 class Polynomial
@@ -58,12 +58,20 @@ class Polynomial
 
         // Équalité, inéqualité
         template<typename U>
-        bool operator == (const Polynomial<U>& poly) const;
-        //friend bool operator == (const Polynomial& a, const Polynomial& b);
+        friend bool operator == (const Polynomial<U>& a, const Polynomial<U>& b);
 
         template<typename U>
-        bool operator != (const Polynomial<U>& poly) const;
-        //friend bool operator != (const Polynomial& a, const Polynomial& b);
+        friend bool operator != (const Polynomial<U>& a, const Polynomial<U>& b);
+
+        // Ordering
+        template<typename U>
+        friend bool operator < (const Polynomial<U>& a, const Polynomial<U>& b);
+        template<typename U>
+        friend bool operator <= (const Polynomial<U>& a, const Polynomial<U>& b);
+        template<typename U>
+        friend bool operator > (const Polynomial<U>& a, const Polynomial<U>& b);
+        template<typename U>
+        friend bool operator >= (const Polynomial<U>& a, const Polynomial<U>& b);
 
         // Printing operator
         template<typename U>
@@ -178,16 +186,16 @@ T Polynomial<T>::operator[] (const size_t index) const
     return getMember(index);
 }
 
-template<typename T> template<typename U>
-bool Polynomial<T>::operator==(const Polynomial<U>& poly) const
+template<typename T>
+bool operator==(const Polynomial<T>& a, const Polynomial<T>& b)
 {
-    return this->equals(poly);
+    return a.equals(b);
 }
 
-template<typename T> template<typename U>
-bool Polynomial<T>::operator!=(const Polynomial<U>& poly) const
+template<typename T>
+bool operator!=(const Polynomial<T>& a, const Polynomial<T>& b)
 {
-    return !this->equals(poly);
+    return !a.equals(b);
 }
 
 template<typename T>
@@ -220,15 +228,28 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
 
         // Only print the coefficient if it is not 1. The 1 multiplier as it's multiplicative inverse can be omitted.
 		// Because of templating, we use a custom implementation here.
-        if (id_multiplicative_exists<T>::value)
+        //
+        // But this should only happen for the non-constant member...
+        if (cit->first != 0)
         {
-            if (abs_value<T>::known && abs_value<T>::abs(cit->second) != id_multiplicative<T>::value)
-                o << abs_value<T>::abs(cit->second);
-            else if (!abs_value<T>::known && cit->second != id_multiplicative<T>::value)
+            if (id_multiplicative_exists<T>::value)
+            {
+                if (abs_value<T>::known && abs_value<T>::abs(cit->second) != id_multiplicative<T>::value)
+                    o << abs_value<T>::abs(cit->second);
+                else if (!abs_value<T>::known && cit->second != id_multiplicative<T>::value)
+                    o << cit->second;
+            }
+            else
                 o << cit->second;
         }
         else
-            o << cit->second;
+        {
+            // If the number is negative, print only its absolute value (the - was printed earlier)
+            if (abs_value<T>::known && cit->second < abs_value<T>::abs(cit->second))
+                o << abs_value<T>::abs(cit->second);
+            else
+                o << cit->second;
+        }
 
         // Don't print the power for the first-order member and don't print x for the constant member
         if (cit->first > 1)
@@ -563,5 +584,40 @@ Polynomial<T> operator%(const Polynomial<T>& a, const Polynomial<T>& b)
 
     return r;
 }
+
+// The 'phi' functions of polynomials (in the Euclidean ring order) is their degree
+template<typename T>
+bool operator<(const Polynomial<T>& a, const Polynomial<T>& b)
+{
+    return a.degree() < b.degree();
+}
+
+template<typename T>
+bool operator<=(const Polynomial<T>& a, const Polynomial<T>& b)
+{
+    return a.degree() <= b.degree();
+}
+
+template<typename T>
+bool operator>(const Polynomial<T>& a, const Polynomial<T>& b)
+{
+    return a.degree() > b.degree();
+}
+
+template<typename T>
+bool operator>=(const Polynomial<T>& a, const Polynomial<T>& b)
+{
+    return a.degree >= b.degree();
+}
+
+// The additive and multiplicative identity of a polynomial of type T is
+// a constant polynomial with LC of add/mult id of type T.
+template<typename T> struct id_multiplicative_exists<Polynomial<T>> : id_multiplicative_exists<T>{};
+template<typename T> struct id_multiplicative<Polynomial<T>> { static Polynomial<T> const value; };
+template<typename T> Polynomial<T> const id_multiplicative<Polynomial<T>>::value = Polynomial<T>(id_multiplicative<T>::value);
+
+template<typename T> struct id_additive_exists<Polynomial<T>> : id_additive_exists<T>{};
+template<typename T> struct id_additive<Polynomial<T>> { static Polynomial<T> const value; };
+template<typename T> Polynomial<T> const id_additive<Polynomial<T>>::value = Polynomial<T>(id_additive<T>::value);
 
 #endif // _POLYNOMIAL_H
