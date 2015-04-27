@@ -1,5 +1,5 @@
-#ifndef _IDENTITY_H
-#define _IDENTITY_H
+#ifndef _ADD_MULT_IDENTITY_H
+#define _ADD_MULT_IDENTITY_H
 
 // Check is a given type happens to have a multiplicative identity, and if so, return it.
 // This is implemented here for basic arithmetic types.
@@ -150,4 +150,4 @@ float const id_additive<float>::value = 0.0;
 double const id_additive<double>::value = 0.0;
 long double const id_additive<long double>::value = 0.0;
 
-#endif // _IDENTITY_H
+#endif // _ADD_MULT_IDENTITY_H

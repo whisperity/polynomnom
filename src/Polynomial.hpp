@@ -221,9 +221,9 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
 
         // Print the signum of the coefficient
         // (so it would neatly look as -5x^2 + 3x - 2)
-        if (cit->second < 0)
+        if (cit->second < id_additive<T>::value)
             o << "- ";
-        else if (cit->second > 0 && !firstCoeff)
+        else if (cit->second > id_additive<T>::value && !firstCoeff)
             o << "+ ";
 
         // Only print the coefficient if it is not 1. The 1 multiplier as it's multiplicative inverse can be omitted.

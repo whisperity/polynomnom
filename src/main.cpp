@@ -5,12 +5,24 @@
 #include <iostream>
 #include "Polynomial.hpp"
 #include "EuclideanAlgorithm.hpp"
+#include "Residue.hpp"
 
 using namespace std;
 
+#include <ctime>
+#include <cstdlib>
+const float HI = 1000;
+const float LO = -1000;
+double ran()
+{
+    return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
+}
+
+int main2();
 int main()
 {
     //cout << "Hello world!" << endl;
+    srand(static_cast <unsigned> (time(0)));
 
     cout << endl;
     Polynomial<double> a;
@@ -297,9 +309,55 @@ int main()
         << result.gcd << endl;
     cout << "Truly? " << (result.a*result.x + result.b*result.y == result.gcd ? "Yeah." : "Noope.") << endl;
 
+    main2();
+
     cout << endl << "Type something to exit." << endl;
     std::string temp;
     std::cin >> temp;
+
+    return 0;
+}
+
+int main2()
+{
+    cout << endl << endl;
+    cout << "RESIDUE TESTING" << endl;
+    cout << "---------------" << endl;
+
+    Residue r(5);
+    cout << "-1 mod 5: " << r.calcMod(-1) << endl;
+    cout << "2 mod 5: " << r.calcMod(2) << endl;
+    cout << "25 mod 5: " << r.calcMod(25) << endl;
+
+    Residue q(3);
+    cout << "-3 mod 3: " << q.calcMod(-3) << endl;
+
+    ResidueNum<5> a(2);
+    ResidueNum<5> b(4);
+    cout << "2 + 4 = " << (a + b).number() << " (mod 5)" << endl;
+
+    ResidueNum<10> c(5); ResidueNum<10> e(47);
+    cout << "47 * 5 (mod 10) = " << (c * e).number() << endl;
+
+    cout << id_multiplicative<ResidueNum<3>>::value << endl;
+    cout << id_additive<ResidueNum<3>>::value << endl;
+
+    // 47 is congruent to 7 (mod 10)
+    cout << "5 < 47  <=>  5 < 7 : " << (c < e ? "Yea" : "Nay") << endl;
+
+    cout << endl << "p1 := x^4 + x^3 -3x^2 -4x -1" << endl << "p2 := x^3 + x^2 -x -1 \t\t\t (in Z3)" << endl;
+    Polynomial<ResidueNum<3>> egy, ketto;
+    egy.setMember(4, ResidueNum<3>(1)); egy.setMember(3, ResidueNum<3>(1)); egy.setMember(2, ResidueNum<3>(-3));
+        egy.setMember(1, ResidueNum<3>(-4)); egy.setMember(0, ResidueNum<3>(-1));
+    ketto.setMember(3, ResidueNum<3>(1)); ketto.setMember(2, ResidueNum<3>(1));
+        ketto.setMember(1, ResidueNum<3>(-1)); ketto.setMember(0, ResidueNum<3>(-1));
+
+    cout << "After simplification: " << endl;
+    cout << "p1: " << egy << endl;
+    cout << "p2: " << ketto << endl;
+
+    // This isn't working yet, there's no division operator for ResidueNum<>s.
+    /*cout << "GCD(p1, p2) : " << euclidean<Polynomial<ResidueNum<3>>>(egy, ketto) << endl;*/
 
     return 0;
 }
