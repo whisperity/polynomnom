@@ -357,7 +357,7 @@ void Polynomial<T>::multiply(const Polynomial<T>& poly)
         for (size_t i = 0; i <= complexOne->degree(); ++i)
         {
             T coeff = complexOne->getMember(i);
-            if (coeff == 0) continue;
+            if (coeff == id_additive<T>::value) continue;
 
             multiple.setMember(i, coeff * constant);
         }
@@ -374,12 +374,12 @@ void Polynomial<T>::multiply(const Polynomial<T>& poly)
         for (size_t i = 0; i <= this->degree(); ++i)
         {
             T left = this->getMember(i);
-            if (left == 0) continue; // 0 * anything = 0
+            if (left == id_additive<T>::value) continue; // 0 * anything = 0
 
             for (size_t j = 0; j <= poly.degree(); ++j)
             {
                 T right = poly.getMember(j);
-                if (right == 0) continue; // anything * 0 = 0
+                if (right == id_additive<T>::value) continue; // anything * 0 = 0
 
                 // Basically you have to multiply every member with every member...
                 multi_coefficients.at(i+j) += left * right;

@@ -345,6 +345,32 @@ int main2()
     // 47 is congruent to 7 (mod 10)
     cout << "5 < 47  <=>  5 < 7 : " << (c < e ? "Yea" : "Nay") << endl;
 
+    ResidueNum<6> try1(28), try2(14);
+    cout << try1.number() << " : " << try2.number() << " (mod 6) = " << (try1 / try2).number() << endl;
+
+    // Solve 5 : 2 = ? (mod 7)
+    ResidueNum<7> five(5), two(2);
+    cout << "5 : 2 = " << (five / two).number() << " (mod 7), because" << endl;
+    cout << "2*" << (five / two).number() << " == " << (five * two).number();
+    cout << " == congruent == " << Residue(7).calcMod((five / two).number()) << " (mod 7)" << endl;
+    cout << "Truly? " << (Residue(7).multiply((five / two).number(), 2) == 5 ? "Yeah." : "Nope.") << endl;
+
+    cout << "2 : 5 = " << (two / five).number() << " (mod 7)" << endl;
+
+    // Try to solve 5 : 2 = ? (mod 6).
+    // This shouldn't give a result, but rather an exception.
+    ResidueNum<6> otHAT(5), kettoHAT(2);
+    cout << "5 : 2 = ";
+    try
+    {
+        cout << (otHAT / kettoHAT).number() << endl;
+    }
+    catch (const exception& e)
+    {
+        cout << "ERROR! Operation unsolvable: " << endl << e.what() << endl;
+    }
+
+    // Példa az egyik gyakorlatról
     cout << endl << "p1 := x^4 + x^3 -3x^2 -4x -1" << endl << "p2 := x^3 + x^2 -x -1 \t\t\t (in Z3)" << endl;
     Polynomial<ResidueNum<3>> egy, ketto;
     egy.setMember(4, ResidueNum<3>(1)); egy.setMember(3, ResidueNum<3>(1)); egy.setMember(2, ResidueNum<3>(-3));
@@ -356,8 +382,37 @@ int main2()
     cout << "p1: " << egy << endl;
     cout << "p2: " << ketto << endl;
 
-    // This isn't working yet, there's no division operator for ResidueNum<>s.
-    /*cout << "GCD(p1, p2) : " << euclidean<Polynomial<ResidueNum<3>>>(egy, ketto) << endl;*/
+    cout << egy << " : " << ketto << " = " << (egy / ketto) << endl;
+    cout << "\t\t\tr: " << (egy % ketto) << " \t (in Z3)" << endl;
+    cout << "GCD(p1, p2) : " << euclidean<Polynomial<ResidueNum<3>>>(egy, ketto) << endl;
+
+    // Példa a korábbi polinomokról, az a bizonyos 5x^4 + ... : 2x^2 + ... (Z7-ben)
+    cout << endl << endl;
+    Polynomial<ResidueNum<7>> o, k;
+    o.setMember(4, ResidueNum<7>(5)); o.setMember(1, ResidueNum<7>(2)); o.setMember(0, ResidueNum<7>(-3));
+    k.setMember(2, ResidueNum<7>(2)); k.setMember(1, ResidueNum<7>(-3)); k.setMember(0, ResidueNum<7>(4));
+
+    cout << o << " : " << k << " (Z7) = " << (o / k) << endl;
+    cout << "\t\tr: " << (o % k) << endl;
+
+    // Try this also in Z6... this shouldn't have an answer just as how 5 : 2 (in Z6) does not hold.
+    cout << endl;
+    Polynomial<ResidueNum<6>> o2, k2;
+    o2.setMember(4, ResidueNum<6>(5)); o2.setMember(1, ResidueNum<6>(2)); o2.setMember(0, ResidueNum<6>(-3));
+    k2.setMember(2, ResidueNum<6>(2)); k2.setMember(1, ResidueNum<6>(-3)); k2.setMember(0, ResidueNum<6>(4));
+
+    cout << o2 << " : " << k2 << " (Z6) = ";
+    try
+    {
+        cout << (o2 / k2) << endl;
+        cout << "\t\tr: " << (o2 % k2) << endl;
+    }
+    catch (const exception& e)
+    {
+        cout << "ERROR! Operation unsolvable: " << endl << e.what() << endl;
+    }
+
+    cout << endl;
 
     return 0;
 }
