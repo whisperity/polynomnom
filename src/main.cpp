@@ -19,6 +19,7 @@ double ran()
 }
 
 int main2();
+int main3();
 int main()
 {
     //cout << "Hello world!" << endl;
@@ -305,11 +306,12 @@ int main()
     cout << egyKettoGCD << endl;
 
     EEuclideanResult<Polynomial<double>> result = extended_euclidean<Polynomial<double>>(egy, ketto);
-    cout << "ExtendedEuclidean(egy, 62) :== [" << result.a << " * " << result.x << "] + [" << result.b << " * " << result.y << "] = "
+    cout << "ExtendedEuclidean(egy, ketto) :== [" << result.a << " * " << result.x << "] + [" << result.b << " * " << result.y << "] = "
         << result.gcd << endl;
     cout << "Truly? " << (result.a*result.x + result.b*result.y == result.gcd ? "Yeah." : "Noope.") << endl;
 
     main2();
+    main3();
 
     cout << endl << "Type something to exit." << endl;
     std::string temp;
@@ -413,6 +415,147 @@ int main2()
     }
 
     cout << endl;
+
+    return 0;
+}
+
+#include "Rational.hpp"
+void addTest(long aN, long aD, long bN, long bD, long eN, long eD, bool valueSet = true)
+{
+    Rational a(aN, aD), b(bN, bD), e(eN, eD);
+    cout << "a: " << a << "\tb:" << b << "\t\t";
+    if (valueSet)
+        a += b;
+    else
+        a = a + b;
+    cout << "a " << (valueSet ? "+=" : "+") << " b: " << a << "\t=?=\t" << e << "\t\t" << (a == e ? "Yeah." : "Nope :(") << endl;
+}
+
+void subTest(long aN, long aD, long bN, long bD, long eN, long eD, bool valueSet = true)
+{
+    Rational a(aN, aD), b(bN, bD), e(eN, eD);
+    cout << "a: " << a << "\tb:" << b << "\t\t";
+    if (valueSet)
+        a -= b;
+    else
+        a = a - b;
+    cout << "a " << (valueSet ? "-=" : "-") << " b: " << a << "\t=?=\t" << e << "\t\t" << (a == e ? "Yeah." : "Nope :(") << endl;
+}
+
+void mulTest(long aN, long aD, long bN, long bD, long eN, long eD, bool valueSet = true)
+{
+    Rational a(aN, aD), b(bN, bD), e(eN, eD);
+    cout << "a: " << a << "\tb:" << b << "\t\t";
+    if (valueSet)
+        a *= b;
+    else
+        a = a * b;
+    cout << "a " << (valueSet ? "*=" : "*") << " b: " << a << "\t=?=\t" << e << "\t\t" << (a == e ? "Yeah." : "Nope :(") << endl;
+}
+
+void divTest(long aN, long aD, long bN, long bD, long eN, long eD, bool valueSet = true)
+{
+    Rational a(aN, aD), b(bN, bD), e(eN, eD);
+    cout << "a: " << a << "\tb:" << b << "\t\t";
+    if (valueSet)
+        a /= b;
+    else
+        a = a / b;
+    cout << "a " << (valueSet ? "/=" : "/") << " b: " << a << "\t=?=\t" << e << "\t\t" << (a == e ? "Yeah." : "Nope :(") << endl;
+}
+
+int main3()
+{
+    cout << "RATIONAL TESTING" << endl;
+    cout << "----------------" << endl;
+
+    Rational a(4);
+    Rational b(5, -4);
+    Rational c(-5, 2);
+    Rational d(-10, -20);
+    cout << a << "\t" << b << "\t" << c << "\t" << d << endl;
+    cout << a.real_value() << "\t" << b.real_value() << "\t" << c.real_value() << "\t" << d.real_value() << endl;
+
+    cout << (Rational(1, 2, false) > Rational(2, 5, false)) << endl;
+
+    cout << Rational(-4, 5).abs_value() << endl;
+
+    addTest(1, 2, -2, 5, 1, 10); cout << endl;
+    addTest(-4, 10, -6, 10, -10, 10); cout << endl;
+    addTest(5, 11, 8, 13, 153, 143); cout << endl;
+    addTest(-9, 2, 3, 7, -57, 14); cout << endl;
+
+    addTest(1, 4, 3, 5, 17, 20);
+    addTest(-1, 4, -3, 5, -17, 20);
+    addTest(-1, 4, 3, 5, 7, 20);
+    addTest(1, 4, -3, 5, -7, 20);
+
+    cout << endl;
+    subTest(2, 4, 1, 4, 1, 4);
+
+    cout << endl;
+    mulTest(2, 3, 4, 6, 4, 9);
+    mulTest(2, 3, -4, 6, -4, 9);
+    mulTest(-2, 3, 4, 6, -4, 9);
+    mulTest(-2, 3, -4, 6, 4, 9);
+
+    cout << endl;
+    divTest(2, 3, 4, 6, 1, 1);
+    divTest(-2, 3, 4, 6, -1, 1);
+    divTest(2, 3, -4, 6, -1, 1);
+    divTest(-2, 3, -4, 6, 1, 1);
+
+    cout << endl << endl << "The same with the return new operators isntead of the in-place ones (so + instead of +=):" << endl;
+    addTest(1, 2, -2, 5, 1, 10, false); cout << endl;
+    addTest(-4, 10, -6, 10, -10, 10, false); cout << endl;
+    addTest(5, 11, 8, 13, 153, 143, false); cout << endl;
+    addTest(-9, 2, 3, 7, -57, 14, false); cout << endl;
+
+    addTest(1, 4, 3, 5, 17, 20, false);
+    addTest(-1, 4, -3, 5, -17, 20, false);
+    addTest(-1, 4, 3, 5, 7, 20, false);
+    addTest(1, 4, -3, 5, -7, 20, false);
+
+    cout << endl;
+    subTest(2, 4, 1, 4, 1, 4, false);
+
+    cout << endl;
+    mulTest(2, 3, 4, 6, 4, 9, false);
+    mulTest(2, 3, -4, 6, -4, 9, false);
+    mulTest(-2, 3, 4, 6, -4, 9, false);
+    mulTest(-2, 3, -4, 6, 4, 9, false);
+
+    cout << endl;
+    divTest(2, 3, 4, 6, 1, 1, false);
+    divTest(-2, 3, 4, 6, -1, 1, false);
+    divTest(2, 3, -4, 6, -1, 1, false);
+    divTest(-2, 3, -4, 6, 1, 1, false);
+
+    cout << endl;
+    cout << "Additive identity: " << id_additive<Rational>::value << "\tmultiplicative: " << id_multiplicative<Rational>::value << endl;
+
+    // Test some rational-polynomials
+    // (Previously these were tested with doubles.)
+    // 5x^4 + 2x - 3    :   2x^2 - 3x + 4
+    cout << "Nagy Gábor, now with rationals." << endl;
+    Polynomial<Rational> ngF, ngG, ngQ, ngR;
+    ngF.setMember(4, Rational(5)); ngF.setMember(1, Rational(2)); ngF.setMember(0, Rational(-3));
+    ngG.setMember(2, Rational(2)); ngG.setMember(1, Rational(-3)); ngG.setMember(0, Rational(4));
+
+    // Expected results:
+    // Quotient: 5/2 x^2 + 15/4 x + 5/8
+    // Remainder: -89/8 x - 11/2
+    ngQ.setMember(2, Rational(5, 2)); ngQ.setMember(1, Rational(15, 4)); ngQ.setMember(0, Rational(5, 8));
+    ngR.setMember(1, Rational(-89, 8)); ngR.setMember(0, Rational(-11, 2));
+    cout << "ngF := " << ngF << endl;
+    cout << "ngG := " << ngG << endl;
+    cout << "ngQ := " << ngQ << endl;
+    cout << "ngR := " << ngR << endl;
+    cout << "(ngG * ngQ) + ngR = " << (ngG * ngQ) + ngR << endl;
+
+    cout << "ngF : ngG = " << ngF / ngG << endl;
+    cout << "ngF % ngG = " << ngF % ngG << endl;
+    cout << "Quotient match? " << ((ngF / ngG) == ngQ) << "\tRemainders match? " << ((ngF % ngG) == ngR) << endl;
 
     return 0;
 }

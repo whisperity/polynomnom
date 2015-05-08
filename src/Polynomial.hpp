@@ -339,7 +339,7 @@ void Polynomial<T>::multiply(const Polynomial<T>& poly)
     // If both is a constant, the multiple is trivially the constants' multiple
     else if (this->isConstant() && poly.isConstant())
     {
-        T multiple = this->getMember(0) * poly.getMember(0);
+        T multiple = this->leadingCoefficient() * poly.leadingCoefficient();
 
         this->m_coefficients.clear();
         this->setMember(0, multiple);
@@ -480,7 +480,7 @@ bool Polynomial<T>::equals(const Polynomial<T>& poly) const
 
     bool is_equal = true; // Assume that it is equal
     for (size_t i = 0; i <= this->degree(); ++i) // The sizes are now equal
-        is_equal = is_equal || (this->getMember(i) == poly.getMember(i));
+        is_equal |= (this->getMember(i) == poly.getMember(i));
 
     return is_equal;
 }
@@ -610,6 +610,7 @@ bool operator>=(const Polynomial<T>& a, const Polynomial<T>& b)
     return a.degree >= b.degree();
 }
 
+#ifdef _ADD_MULT_IDENTITY_H
 // The additive and multiplicative identity of a polynomial of type T is
 // a constant polynomial with LC of add/mult id of type T.
 template<typename T> struct id_multiplicative_exists<Polynomial<T>> : id_multiplicative_exists<T>{};
@@ -619,5 +620,6 @@ template<typename T> Polynomial<T> const id_multiplicative<Polynomial<T>>::value
 template<typename T> struct id_additive_exists<Polynomial<T>> : id_additive_exists<T>{};
 template<typename T> struct id_additive<Polynomial<T>> { static Polynomial<T> const value; };
 template<typename T> Polynomial<T> const id_additive<Polynomial<T>>::value = Polynomial<T>(id_additive<T>::value);
+#endif // _ADD_MULT_IDENTITY_H
 
 #endif // _POLYNOMIAL_H

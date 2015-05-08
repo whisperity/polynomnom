@@ -102,7 +102,7 @@ class ResidueNum
         friend std::ostream& operator << (std::ostream& o, const Polynomial<U>& poly);
     private:
         long m_number;
-        static const long m_modulo = M;
+        //static const long m_modulo = M;
 };
 
 template<long M>
@@ -114,7 +114,8 @@ ResidueNum<M>::ResidueNum()
 template<long M>
 ResidueNum<M>::ResidueNum(const long num)
 {
-    this->m_number = num;
+    Residue r(M);
+    this->m_number = r.calcMod(num);
 }
 
 template<long M>
@@ -132,7 +133,7 @@ long ResidueNum<M>::number() const
 template<long M>
 ResidueNum<M> operator + (const ResidueNum<M>& a, const ResidueNum<M>& b)
 {
-    Residue r(a.m_modulo);
+    Residue r(M);
 
     ResidueNum<M> c(r.add(a.m_number, b.m_number));
     return c;
@@ -141,7 +142,7 @@ ResidueNum<M> operator + (const ResidueNum<M>& a, const ResidueNum<M>& b)
 template<long M>
 ResidueNum<M> operator - (const ResidueNum<M>& a, const ResidueNum<M>& b)
 {
-    Residue r(a.m_modulo);
+    Residue r(M);
 
     ResidueNum<M> c(r.subtract(a.m_number, b.m_number));
     return c;
@@ -150,7 +151,7 @@ ResidueNum<M> operator - (const ResidueNum<M>& a, const ResidueNum<M>& b)
 template<long M>
 ResidueNum<M> operator * (const ResidueNum<M>& a, const ResidueNum<M>& b)
 {
-    Residue r(a.m_modulo);
+    Residue r(M);
 
     ResidueNum<M> c(r.multiply(a.m_number, b.m_number));
     return c;
@@ -258,7 +259,7 @@ std::ostream& operator << (std::ostream& o, const ResidueNum<M>& num)
     return o;
 }
 
-
+#ifdef _ADD_MULT_IDENTITY_H
 // Declare the additive and multiplicative inverses for residue numbers
 template<long M> struct id_multiplicative_exists<ResidueNum<M>> : id_multiplicative_known{};
 template<long M> struct id_multiplicative<ResidueNum<M>> { static ResidueNum<M> const value; };
@@ -267,7 +268,9 @@ template<long M> ResidueNum<M> const id_multiplicative<ResidueNum<M>>::value = R
 template<long M> struct id_additive_exists<ResidueNum<M>> : id_additive_known{};
 template<long M> struct id_additive<ResidueNum<M>> { static ResidueNum<M> const value; };
 template<long M> ResidueNum<M> const id_additive<ResidueNum<M>>::value = ResidueNum<M>(0);
+#endif // _ADD_MULT_IDENTITY_H
 
+#ifdef _ABSVALUE_WRAPPER_H
 // Declare the absolute value function for residue numbers.
 template<long M>
 struct abs_value<ResidueNum<M>>
@@ -281,4 +284,5 @@ struct abs_value<ResidueNum<M>>
         return n;
     }
 };
+#endif // _ABSVALUE_WRAPPER_H
 #endif // _RESIDUE_H

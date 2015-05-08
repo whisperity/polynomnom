@@ -46,7 +46,7 @@ To utilise the library, `T` must have the operators `+`, `-`, `*`, `/`, `+=`, `<
   - `/` and `%` refers to the results of [Polynomial long division](http://en.wikipedia.org/wiki/Polynomial long division), `/` creates the quotient, `%` creates the remainder.
   - For performance reasons, if you wish to calculate **both** the quotient and remainder of a polynomial division, you should use member function `divide()` instead. *(See below.)*
  * Of course, polynomials can be checked if they are equal (`==`, `!=`) and ordered (`<`, `<=`, `>`, `>=`). Ordering them is based on their degree, so a polynomial of less number of members (smaller degree) is considered *smaller*.
- * `<<`: Infeeding the polynomial into an output stream (for example `std::cout << poly;`) creates a textual representation.
+ * `<<`: Outfeeding the polynomial into an stream (for example `std::cout << poly;`) creates a textual representation.
 
 #### Polynomial division
 Calculating the quotient of a polynomial divided by another is a costly operation involving a lot of multiplicative routines. Using the `/` and `%` operators to calculate the quotient of remainder runs the whole lot of operation twice.
@@ -71,7 +71,7 @@ std::cout << "Remainder: " << r << std::endl;
 ```
 
 ## The Euclidean Algorithm
-> **EuclideanAlgorithm.hpp**
+> Implemented in **EuclideanAlgorithm.hpp**
 
 The [Euclidean algorithm](http://en.wikipedia.org/wiki/Euclidean algorithm) is used to calculate the [greatest common divisor](http://en.wikipedia.org/wiki/Greatest common divisor) of two numbers (*GCD*), and its extended version calculates the coefficients of a linear combination of the numbers to produce said *GCD*. If the numbers are `a` and `b`, the extended algorithm solves the equation `ax + by = gcd(a, b)` for `x` and `y`.
 
@@ -86,7 +86,7 @@ Three functions are given:
   - The function returns an `EEuclideanResult<T>` variable which contains five member properties: `a`, `b`, `x`, `y` and `gcd`, which are the respectively the variables of the above equation.
 
 ## Residue numbers, remainder rings, Zm
-> **Residue.hpp**
+> Implemented in **Residue.hpp**
 
 `Zm` is the residue system created from the results of operation `mod m`. For example, `Z3` contains all the possible values of `mod 3`: 0, 1 and 2.
 
@@ -113,8 +113,46 @@ std::cout << (a / b) << std::endl;
 Execution of this code will fail due to an exception, because you are not able to find a number which multiplies 2 to get an odd number as a result (namely 5). The whole mathematical system behind it is not part of this README.
 
 ## Rational numbers
-> **To be developed.**
+> Implemented in **Rational.hpp**
+
+[Rational numbers](http://en.wikipedia.org/wiki/Rational number) are numbers expressed as the quotient of the fraction `p/q`, where `q` and `p` are both integers, and `q` does not equal zero. `p` is commonly called the *numerator* and `q` is the *denominator*. Of course, integers are implicitly rational numbers by definion, as `x/1` is `x`.
+
+For the sake of this library, rational numbers are implemented to help the division of polynomials. Without rational numbers, the division of `Polynomial<int>` `5x^2 + x : 3x` could not be carried out (usually indicated by the `divide()` function of `Polynomial` trapping in an infinite loop) because `5/3` (the coefficient for `x` in the quotient) could not be represented as an `int`.
+
+Rational numbers are implemented that their numerators and denominators are **unsigned** and the number's sign are stored in a seperate bit. Being simple constructs, rational number instances are **immutable** once created.
+
+The numbers can be constructed in different ways to ease operation:
+ * `Rational()` constructs the rational number `0/1`, the representation of `0`
+ * `Rational(num)` converts the given integer `num` to the rational number `num/1`, negativity is calculated *implicitly*
+ * `Rational(num, den)` creates the rational number `num/den`, negativity is calculated *implicitly*
+ * `Rational(num, den, neg)` creates the rational number `num/den` but the sign is given **explicity** (`neg` is `true` for negative rationals)
+
+Hence, the following polynomial:
+
+```
+ 5        4      1
+ - x^2 +  - x  - -
+ 2        9      5
+```
+
+could be constructed with the snippet
+
+```c++
+Polynomial<Rational> a;
+a.setMember(2, Rational(5, 2));
+a.setMember(1, Rational(4, 9));
+a.setMember(0, Rational(1, 5, true));
+// or a.setMember(0, Rational(-1, 5));
+```
+
+The members functions of the class are:
+ * `numerator()`, `denominator()`, `negative()` gives the appropriate part of the representation.
+ * `abs_value()` returns the absolute value.
+ * `real_value()` converts the rational number to a **floating-point** one by calculating it's *exact* value.
+ * Arithmetic operators `+`, `-`, `*`, `/` and their assignment counterparts `+=`, `-=`, `*=`, `/=`
+ * Ordering (`<`, `<=`, `>`, `>=`) and equality (`==`, `!=`) operators
+ * Outfeeding operator `<<` to a stream creates the literal representation `"num/deg"`, where the negativity is expressed as a `-` sign **always** before the numerator.
 
 Technical details
 -----------------
-Because of the library being fully templated, `T` types must implement their additive and multiplicative identities and an absolute value function.
+Because of the library being fully templated, `T` types must implement their additive and multiplicative identities and an absolute value function. This is already given for types of this library and the common primitive types. Examples can be seen in **absvalue_wrapper.hpp** and **add_mult_identity.hpp**.
