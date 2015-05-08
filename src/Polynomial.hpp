@@ -96,6 +96,9 @@ class Polynomial
         // Calculate the polynomial function's value for variable 't'
         T at(const T t) const;
 
+        // Algebraic derivative (prime)
+        Polynomial<T> derive() const;
+
         // Arithmetical methods
         void add(const Polynomial<T>& poly);
         void subtract(const Polynomial<T>& poly);
@@ -306,6 +309,36 @@ T Polynomial<T>::at(const T t) const
         result = result * t + this->getMember(power);
 
     return result;
+}
+
+template<typename T>
+Polynomial<T> Polynomial<T>::derive() const
+{
+    if (this->isNull() || this->isConstant())
+        return Polynomial<T>();
+
+    // If we consider the polynomial as f0 + f1x + f2x^2 + ..., the
+    //  algebraic derivative (prime) is f1 + 2*f2x + 3*f3x^2 + ...
+    // (Where 2*f2 actually means f2 + f2, as f2 is just a variable of type T)
+    Polynomial<T> derivative;
+    for (size_t power = 0; power < this->degree(); ++power)
+    {
+        // The i-th coefficient of the derivate is (i + 1)* the (i+1)th coefficient
+        T curr_coeff = this->getMember(power + 1);
+
+        // Don't run the loop for coefficients which are 0
+        if (curr_coeff == id_additive<T>::value) continue;
+
+        for (size_t i = 1; i < power + 1; ++i)
+            curr_coeff += this->getMember(power + 1);
+
+        derivative.setMember(power, curr_coeff);
+
+        // The coefficient for the degree-th member is zero, the prime "eats" that part.
+        // Also, the constant part is eaten too.
+    }
+
+    return derivative;
 }
 
 template<typename T>

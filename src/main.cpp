@@ -247,7 +247,7 @@ int main()
 
     cout << "ngF : ngG = " << ngF / ngG << endl;
     cout << "ngF % ngG = " << ngF % ngG << endl;
-    cout << "Quotient match? " << ((ngF / ngG) == ngQ) << "\tRemainders match? " << ((ngF % ngG) == ngR) << endl;
+    cout << "Quotient match? " << ((ngF / ngG) == ngQ) << "\tRemainder match? " << ((ngF % ngG) == ngR) << endl;
 
     // Ezt valahol wikipédián találtam asszem.
     cout << endl;
@@ -555,7 +555,12 @@ int main3()
 
     cout << "ngF : ngG = " << ngF / ngG << endl;
     cout << "ngF % ngG = " << ngF % ngG << endl;
-    cout << "Quotient match? " << ((ngF / ngG) == ngQ) << "\tRemainders match? " << ((ngF % ngG) == ngR) << endl;
+    cout << "Quotient match? " << ((ngF / ngG) == ngQ) << "\tRemainder match? " << ((ngF % ngG) == ngR) << endl;
+
+    //Polynomial<Rational> ngFp = ngF.derive();
+
+    cout << "ngF': " << ngF.derive() << endl;
+    cout << "ngG': " << ngG.derive() << endl;
 
     return 0;
 }

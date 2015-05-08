@@ -42,6 +42,7 @@ To utilise the library, `T` must have the operators `+`, `-`, `*`, `/`, `+=`, `<
  * `at(t)`: Calculate the polynomial function's value if `t` in place of the indeterminate `x`. (This calculation uses [Horner's scheme](http://en.wikipedia.org/wiki/Horner's method).)
  * `getMember(i)`: Get the coefficient for the member which power is `i`.
  * `setMember(i, t)`: Set the coefficient to be `t` for the member which power is `i`. 
+ * `derive()` creates the [algebraic derivative](http://en.wikipedia.org/wiki/Formal derivative) (prime) polynomial
  * The `+`, `-`, `*`, `/` and `%` arithmetical operators are implemented
   - `/` and `%` refers to the results of [Polynomial long division](http://en.wikipedia.org/wiki/Polynomial long division), `/` creates the quotient, `%` creates the remainder.
   - For performance reasons, if you wish to calculate **both** the quotient and remainder of a polynomial division, you should use member function `divide()` instead. *(See below.)*
