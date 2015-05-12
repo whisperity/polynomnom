@@ -230,7 +230,7 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
             o << "+ ";
 
         // Only print the coefficient if it is not 1. The 1 multiplier as it's multiplicative inverse can be omitted.
-		// Because of templating, we use a custom implementation here.
+        // Because of templating, we use a custom implementation here.
         //
         // But this should only happen for the non-constant member...
         if (cit->first != 0)
@@ -383,7 +383,7 @@ void Polynomial<T>::multiply(const Polynomial<T>& poly)
         // Select which polynomial is the constant and the more complex one;
         const Polynomial* constantOne = (this->isConstant() ? this : &poly);
         const Polynomial* complexOne = (!this->isConstant() ? this : &poly);
-        Polynomial multiple;
+        Polynomial<T> multiple;
 
         // Only multiply the coefficients of the complex polynomial by the given constant, storing it in this
         T constant = constantOne->leadingCoefficient();
@@ -435,7 +435,7 @@ bool Polynomial<T>::divide(const Polynomial<T>& divisor, Polynomial<T>& quotient
     if (divisor.degree() > this->degree())
     {
         remainder = *this;
-        Polynomial quotient_null;
+        Polynomial<T> quotient_null;
         quotient = quotient_null;
         return true;
     }
@@ -474,11 +474,11 @@ bool Polynomial<T>::divide(const Polynomial<T>& divisor, Polynomial<T>& quotient
             // Set the current member of the quotient to the quotient of the coefficients
             quotient.setMember(quotient_member_degree, dividend.leadingCoefficient() / divisor.leadingCoefficient());
 
-            Polynomial multiplier;
+            Polynomial<T> multiplier;
             multiplier.setMember(quotient_member_degree, quotient.getMember(quotient_member_degree));
 
             /*cout << "Divisor: " << divisor << endl;*/
-            Polynomial inner_multiple = divisor * multiplier;
+            Polynomial<T> inner_multiple = divisor * multiplier;
 
             dividend = dividend - inner_multiple;
 
@@ -512,8 +512,8 @@ bool Polynomial<T>::equals(const Polynomial<T>& poly) const
         return false;
 
     bool is_equal = true; // Assume that it is equal
-    for (size_t i = 0; i <= this->degree(); ++i) // The sizes are now equal
-        is_equal |= (this->getMember(i) == poly.getMember(i));
+    for (size_t i = 0; i <= this->degree() && is_equal == true; ++i) // The sizes are now equal
+        is_equal &= (this->getMember(i) == poly.getMember(i));
 
     return is_equal;
 }
