@@ -154,6 +154,32 @@ The members functions of the class are:
  * Ordering (`<`, `<=`, `>`, `>=`) and equality (`==`, `!=`) operators
  * Outfeeding operator `<<` to a stream creates the literal representation `"num/deg"`, where the negativity is expressed as a `-` sign **always** before the numerator.
 
+## Lagrange interpolation
+> Implemented in **LagrangeInterpolation.hpp**
+
+[Lagrange interpolation](http://en.wikipedia.org/wiki/Lagrange polynomial) is used to construct a polynomial which results exactly in a value for a given value. It is done by setting a number of (`Ci`, `Di`) pairs and the created polynomial will be `Di` if its function is calculated at `Ci`.
+
+The object of the instance is template-typed for `T`, which will be the type of the `Polynomial` created, so the same restrictions apply.
+
+```c++
+Lagrange<int> lag;
+lag.add(2, 5);
+lag.add(1, 3);
+lag.build();
+cout << lag.polynomial() << endl;
+```
+
+The example creates a polynomial which will calculate 5 and 3 for 2 and 1, respectively.
+
+### Member functions
+ * `add(Ci, Di)` adds a pair to the list of pairs the polynomial have to result to
+ * `get(Ci)` returns the stored `Di` from the pairs
+ * `remove(Ci)` removes the member
+ * `build()` builds the polynomial requested
+ * `polynomial()` returns the calculated polynomial (if built)
+
+The calculation is always checked against the results when building.
+
 Technical details
 -----------------
 Because of the library being fully templated, `T` types must implement their additive and multiplicative identities and an absolute value function. This is already given for types of this library and the common primitive types. Examples can be seen in **absvalue_wrapper.hpp** and **add_mult_identity.hpp**.

@@ -3,9 +3,6 @@
 */
 #include <string>
 #include <iostream>
-#include "Polynomial.hpp"
-#include "EuclideanAlgorithm.hpp"
-#include "Residue.hpp"
 
 using namespace std;
 
@@ -18,11 +15,30 @@ double ran()
     return LO + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (HI - LO)));
 }
 
+int main1();
 int main2();
 int main3();
+int main4();
+
 int main()
 {
     //cout << "Hello world!" << endl;
+    main1();
+    main2();
+    main3();
+    main4();
+
+    cout << endl << "Type something to exit." << endl;
+    std::string temp;
+    std::cin >> temp;
+
+    return 0;
+}
+
+#include "Polynomial.hpp"
+#include "EuclideanAlgorithm.hpp"
+int main1()
+{
     srand(static_cast <unsigned> (time(0)));
 
     cout << endl;
@@ -310,16 +326,10 @@ int main()
         << result.gcd << endl;
     cout << "Truly? " << (result.a*result.x + result.b*result.y == result.gcd ? "Yeah." : "Noope.") << endl;
 
-    main2();
-    main3();
-
-    cout << endl << "Type something to exit." << endl;
-    std::string temp;
-    std::cin >> temp;
-
     return 0;
 }
 
+#include "Residue.hpp"
 int main2()
 {
     cout << endl << endl;
@@ -561,6 +571,33 @@ int main3()
 
     cout << "ngF': " << ngF.derive() << endl;
     cout << "ngG': " << ngG.derive() << endl;
+
+    return 0;
+}
+
+#include "LagrangeInterpolation.hpp"
+int main4()
+{
+    cout << endl << endl;
+    cout << "LAGRANGE TESTING" << endl;
+    cout << "----------------" << endl;
+
+    // Vatai dimat2 2. mintazh megoldása
+    // f(1) = 2, f(2) = 3, f(3) = 5, f(4) = 7 in Z_13[x]
+    Lagrange<ResidueNum<13>> lag;
+    lag.add(ResidueNum<13>(1), ResidueNum<13>(2));
+    lag.add(ResidueNum<13>(2), ResidueNum<13>(3));
+    lag.add(ResidueNum<13>(3), ResidueNum<13>(5));
+    lag.add(ResidueNum<13>(4), ResidueNum<13>(7));
+
+    cout << (lag.build() ? "Lagrange built successfully." : "Build error happened.") << endl;
+    cout << lag.polynomial() << "\t";
+    Polynomial<ResidueNum<13>> lag_expectedRes;
+    lag_expectedRes.setMember(3, ResidueNum<13>(2));
+    lag_expectedRes.setMember(2, ResidueNum<13>(8));
+    lag_expectedRes.setMember(1, ResidueNum<13>(2));
+    lag_expectedRes.setMember(0, ResidueNum<13>(3));
+    cout << (lag.polynomial() == lag_expectedRes ? " Yay!" : "Nooo...") << endl;
 
     return 0;
 }
