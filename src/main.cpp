@@ -599,5 +599,23 @@ int main4()
     lag_expectedRes.setMember(0, ResidueNum<13>(3));
     cout << (lag.polynomial() == lag_expectedRes ? " Yay!" : "Nooo...") << endl;
 
+    // Nagy Gábor diasor.
+    cout << endl << endl;
+    Lagrange<Rational> l2;
+    l2.add(Rational(0), Rational(3));
+    l2.add(Rational(1), Rational(3));
+    l2.add(Rational(4), Rational(7));
+    l2.add(Rational(-1), Rational(0));
+    l2.build();
+    cout << l2.polynomial() << "\t";
+
+    Polynomial<Rational> l2_expect;
+    l2_expect.setMember(3, Rational(22, 60));
+    l2_expect.setMember(2, Rational(-3, 2));
+    l2_expect.setMember(1, Rational(68, 60));
+    l2_expect.setMember(0, Rational(3));
+
+    cout << (l2.polynomial() == l2_expect ? " Yay!" : "Nooo...") << endl;
+
     return 0;
 }
