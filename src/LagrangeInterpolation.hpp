@@ -47,7 +47,7 @@ template<typename T>
 void Lagrange<T>::add(const T Ci, const T Di)
 {
     // Check if the given Ci is already in the vector: if yes, remove it.
-    std::vector<std::pair<T, T>>::const_iterator it = 
+    typename std::vector<std::pair<T, T>>::const_iterator it =
         std::find_if(this->m_knownPairs.cbegin(), this->m_knownPairs.cend(),
             [&Ci](const std::pair<T, T>& thisPair)
             {
@@ -68,7 +68,7 @@ void Lagrange<T>::add(const T Ci, const T Di)
 template<typename T>
 void Lagrange<T>::remove(const T Ci)
 {
-    std::vector<std::pair<T, T>>::const_iterator it =
+    typename std::vector<std::pair<T, T>>::const_iterator it =
         std::find_if(this->m_knownPairs.cbegin(), this->m_knownPairs.cend(),
             [&Ci](const std::pair<T, T>& thisPair)
             {
@@ -88,7 +88,7 @@ template<typename T>
 bool Lagrange<T>::get(const T Ci, T& Di) const
 {
     // Get the Di for the Ci
-    std::vector<std::pair<T, T>>::const_iterator it =
+    typename std::vector<std::pair<T, T>>::const_iterator it =
         std::find_if(this->m_knownPairs.cbegin(), this->m_knownPairs.cend(),
             [&Ci](const std::pair<T, T>& thisPair)
             {
@@ -133,14 +133,14 @@ bool Lagrange<T>::build()
 
     Polynomial<T> full;
 
-    for (std::vector<std::pair<T, T>>::const_iterator it = this->m_knownPairs.cbegin();
+    for (typename std::vector<std::pair<T, T>>::const_iterator it = this->m_knownPairs.cbegin();
         it != this->m_knownPairs.cend(); ++it)
     {
         T Ci = (*it).first;
         Polynomial<T> li(id_multiplicative<T>::value); // Make the polynomial default for multiplication
 
         // Create the sub-polynomials for the current index.
-        for (std::vector<std::pair<T, T>>::const_iterator inner = this->m_knownPairs.cbegin();
+        for (typename std::vector<std::pair<T, T>>::const_iterator inner = this->m_knownPairs.cbegin();
             inner != this->m_knownPairs.cend(); ++inner)
         {
             T Cj = (*inner).first;
@@ -192,7 +192,7 @@ void Lagrange<T>::_check(const Polynomial<T>& poly)
 
     this->m_checkPassed = false;
     bool temp = true;
-    for (std::vector<std::pair<T, T>>::const_iterator it = this->m_knownPairs.cbegin();
+    for (typename std::vector<std::pair<T, T>>::const_iterator it = this->m_knownPairs.cbegin();
         it != this->m_knownPairs.cend(); ++it)
     {
         // (Ci, Di) pairs
