@@ -329,6 +329,14 @@ int main1()
         << result.gcd << endl;
     cout << "Truly? " << (result.a*result.x + result.b*result.y == result.gcd ? "Yeah." : "Noope.") << endl;
 
+    // Equality checker
+    cout << endl;
+    Polynomial<double> keke, keke2;
+    keke.setMember(1, 7548.23120000000005);
+    keke2.setMember(1, 7548.231200000000000000001);
+
+    cout << keke << " == " << keke2 << " ? " << (keke == keke2 ? "Yes." : "No.") << endl;
+
     // Complex polynomial
     cout << endl;
     cout << Complex(2, 3) * Complex(2, 3) << endl;

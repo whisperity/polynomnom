@@ -498,6 +498,28 @@ bool Polynomial<T>::divide(const Polynomial<T>& divisor, Polynomial<T>& quotient
     }
 }
 
+/* Helper functions to equate two values... needed for floating-point arithmetics. */
+template<typename T>
+bool equate(const T& a, const T& b)
+{
+    return a == b;
+}
+
+template<typename T>
+bool float_equate(const T& a, const T& b, T epsilon)
+{
+    return fabs(a - b) < epsilon;
+}
+
+#ifndef _INC_FLOAT
+#include <cfloat>
+#endif // _INC_FLOAT
+
+template<> bool equate(const float& a, const float& b) { return float_equate(a, b, FLT_EPSILON); }
+template<> bool equate(const double& a, const double& b) { return float_equate(a, b, DBL_EPSILON); }
+template<> bool equate(const long double& a, const long double& b) { return float_equate(a, b, (long double)LDBL_EPSILON); }
+/* Helper functions over. */
+
 template<typename T>
 bool Polynomial<T>::equals(const Polynomial<T>& poly) const
 {
@@ -513,7 +535,7 @@ bool Polynomial<T>::equals(const Polynomial<T>& poly) const
 
     bool is_equal = true; // Assume that it is equal
     for (size_t i = 0; i <= this->degree() && is_equal == true; ++i) // The sizes are now equal
-        is_equal &= (this->getMember(i) == poly.getMember(i));
+        is_equal &= equate(this->getMember(i), poly.getMember(i));
 
     return is_equal;
 }
