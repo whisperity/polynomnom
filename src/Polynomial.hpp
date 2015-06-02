@@ -207,7 +207,7 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
     if (poly.isNull())
         return o << "nullPolynomial";
     else if (poly.isConstant())
-        return o << poly.getMember(0) << "(constant)";
+        return o << poly.getMember(0) << " (constant)";
 
     bool firstCoeff = true;
     for (typename Polynomial<T>::coefficientsMap::const_iterator cit = poly.m_coefficients.cbegin();
@@ -229,7 +229,7 @@ std::ostream& operator << (std::ostream& o, const Polynomial<T>& poly)
         else if (cit->second > id_additive<T>::value && !firstCoeff)
             o << "+ ";
 
-        // Only print the coefficient if it is not 1. The 1 multiplier as it's multiplicative inverse can be omitted.
+        // Only print the coefficient if it is not 1. The 1 multiplier as it's multiplicative identity can be omitted.
         // Because of templating, we use a custom implementation here.
         //
         // But this should only happen for the non-constant member...
@@ -292,7 +292,7 @@ template<typename T>
 T Polynomial<T>::at(const T t) const
 {
     // Using Horner's rule:
-    // Consider the polynomial x^5 - 3x^4 + 0x^2 - x + 6 at -1.
+    // Consider the polynomial x^4 - 3x^3 + 0x^2 - x + 6 at -1.
     //
     //     1  -3   0   1   6
     //   |------------------

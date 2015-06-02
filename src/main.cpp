@@ -19,14 +19,16 @@ int main1();
 int main2();
 int main3();
 int main4();
+void myMain();
 
 int main()
 {
-    //cout << "Hello world!" << endl;
+    cout << "Hello world!" << endl;
     main1();
     main2();
     main3();
     main4();
+    myMain();
 
     cout << endl << "Type something to exit." << endl;
     std::string temp;
@@ -37,6 +39,7 @@ int main()
 
 #include "Polynomial.hpp"
 #include "EuclideanAlgorithm.hpp"
+#include "Complex.hpp"
 int main1()
 {
     srand(static_cast <unsigned> (time(0)));
@@ -325,6 +328,19 @@ int main1()
     cout << "ExtendedEuclidean(egy, ketto) :== [" << result.a << " * " << result.x << "] + [" << result.b << " * " << result.y << "] = "
         << result.gcd << endl;
     cout << "Truly? " << (result.a*result.x + result.b*result.y == result.gcd ? "Yeah." : "Noope.") << endl;
+
+    // Complex polynomial
+    cout << endl;
+    cout << Complex(2, 3) * Complex(2, 3) << endl;
+    Polynomial<Complex> cmpl;
+    cmpl.setMember(0, Complex(4, -2));
+    cmpl.setMember(1, Complex(-2, 6));
+    cmpl.setMember(2, Complex(0, 1));
+    cmpl.setMember(3, Complex(-1, 0));
+    cmpl.setMember(4, Complex(1, 1));
+    cmpl.setMember(5, Complex(0, 0));
+    cmpl.setMember(6, Complex(1, 0));
+    cout << cmpl << endl;
 
     return 0;
 }
@@ -618,4 +634,9 @@ int main4()
     cout << (l2.polynomial() == l2_expect ? " Yay!" : "Nooo...") << endl;
 
     return 0;
+}
+
+void myMain()
+{
+    return;
 }

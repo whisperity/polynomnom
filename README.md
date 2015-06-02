@@ -21,7 +21,7 @@ Implementation details
 ## Polynomials
 > Implemented in **Polynomial.hpp**
 
-The Polynomail class represents a [polynomial](http://en.wikipedia.org/wiki/Polynomial), that is, a mathematical expression consisting of a variable (usually **x**) and coefficients. An easy example polynomial is the quadratic function: `3x^2 + 4x - 9`.
+The Polynomial class represents a [polynomial](http://en.wikipedia.org/wiki/Polynomial), that is, a mathematical expression consisting of a variable (usually **x**) and coefficients. An easy example polynomial is the quadratic function: `3x^2 + 4x - 9`.
 
 The above expression can be initialised as a variable in the program as follows:
 
@@ -59,7 +59,7 @@ std::cout << "Quotient:  " << (a / b) << std::endl;
 std::cout << "Remainder: " << (a % b) << std::endl;
 ```
 
-The above operation can be simplified by using the `divide()` member functions:
+The above operation can be simplified by using the `divide()` member function:
 
 ```c++
 // Polynomial<T> a, b;
@@ -91,9 +91,9 @@ Three functions are given:
 
 `Zm` is the residue system created from the results of operation `mod m`. For example, `Z3` contains all the possible values of `mod 3`: 0, 1 and 2.
 
-Calculations can also be done in a residue system (and polynomials can be created with coefficients being residue numbers!). By instantinating variables as `ResidueNum<M>` (where `M` is the modulus), the usual arithmetic, equation and ordering operators work in modulo.
+Calculations can also be done in a residue system (and polynomials can be created with coefficients being residue numbers!). By instantiating variables as `ResidueNum<M>` (where `M` is the modulus), the usual arithmetic, equation and ordering operators work in modulo.
 
-> This `ResidueNum<M>` class is a good example of what a `T` should implement to be usable as a polynomial's coefficient type. Of couse, to create a polynomial with its coefficients being modulo 7, one should declare the variable as `Polynomial<ResidueNum<7>>`.
+> This `ResidueNum<M>` class is a good example of what a `T` should implement to be usable as a polynomial's coefficient type. Of course, to create a polynomial with its coefficients being modulo 7, one should declare the variable as `Polynomial<ResidueNum<7>>`.
 
 The arithmetical operation `a / b` (in the context of residue numbers) is used to solve the [linear congruence](http://en.wikipedia.org/wiki/Modular arithmetic#Congruence relation) `bx === a (mod M)` (where `===` represents the congruence relation).
 
@@ -116,17 +116,17 @@ Execution of this code will fail due to an exception, because you are not able t
 ## Rational numbers
 > Implemented in **Rational.hpp**
 
-[Rational numbers](http://en.wikipedia.org/wiki/Rational number) are numbers expressed as the quotient of the fraction `p/q`, where `q` and `p` are both integers, and `q` does not equal zero. `p` is commonly called the *numerator* and `q` is the *denominator*. Of course, integers are implicitly rational numbers by definion, as `x/1` is `x`.
+[Rational numbers](http://en.wikipedia.org/wiki/Rational number) are numbers expressed as the quotient of the fraction `p/q`, where `q` and `p` are both integers, and `q` does not equal zero. `p` is commonly called the *numerator* and `q` is the *denominator*. Of course, integers are implicitly rational numbers by definition, as `x/1` is `x`.
 
 For the sake of this library, rational numbers are implemented to help the division of polynomials. Without rational numbers, the division of `Polynomial<int>` `5x^2 + x : 3x` could not be carried out (usually indicated by the `divide()` function of `Polynomial` trapping in an infinite loop) because `5/3` (the coefficient for `x` in the quotient) could not be represented as an `int`.
 
-Rational numbers are implemented that their numerators and denominators are **unsigned** and the number's sign are stored in a seperate bit. Being simple constructs, rational number instances are **immutable** once created.
+Rational numbers are implemented that their numerators and denominators are **unsigned** and the number's sign are stored in a separate bit. Being simple constructs, rational number instances are **immutable** once created.
 
 The numbers can be constructed in different ways to ease operation:
  * `Rational()` constructs the rational number `0/1`, the representation of `0`
  * `Rational(num)` converts the given integer `num` to the rational number `num/1`, negativity is calculated *implicitly*
  * `Rational(num, den)` creates the rational number `num/den`, negativity is calculated *implicitly*
- * `Rational(num, den, neg)` creates the rational number `num/den` but the sign is given **explicity** (`neg` is `true` for negative rationals)
+ * `Rational(num, den, neg)` creates the rational number `num/den` but the sign is given **explicitly** (`neg` is `true` for negative numbers)
 
 Hence, the following polynomial:
 
@@ -154,6 +154,18 @@ The members functions of the class are:
  * Ordering (`<`, `<=`, `>`, `>=`) and equality (`==`, `!=`) operators
  * Outfeeding operator `<<` to a stream creates the literal representation `"num/deg"`, where the negativity is expressed as a `-` sign **always** before the numerator.
 
+## Complex numbers *(wrapper)*
+> Implemented in **Complex.hpp**
+
+This class provides a wrapper around [```std::complex```](http://en.cppreference.com/w/cpp/numeric/complex) using ``long double`` to represent the [complex number](http://en.wikipedia.org/wiki/Complex number)'s real and imaginary parts.
+
+The implemented methods consist of a few constructors:
+ * `Complex()` creates the complex number `0`. (`0 + 0i`)
+ * `Complex(re)` creates the complex number `re` (`re + 0i`)
+ * `Complex(re, im)` creates the complex number `re + imi`
+
+and the required arithmetic operations for complex polynomials to work. If you intend on using complex polynomials, you should include `Polynomial.hpp` first in your translational unit and `Complex.hpp` **only afterwards**. This header specialises the `<<` stream feeding operator of `Polynomial<Complex>` so that a neat human-readable representation is obtainable.  
+
 ## Lagrange interpolation
 > Implemented in **LagrangeInterpolation.hpp**
 
@@ -166,7 +178,7 @@ Lagrange<int> lag;
 lag.add(2, 5);
 lag.add(1, 3);
 lag.build();
-cout << lag.polynomial() << endl;
+std::cout << lag.polynomial() << std::endl;
 ```
 
 The example creates a polynomial which will calculate 5 and 3 for 2 and 1, respectively.
